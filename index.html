@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>С днём рождения, дедушка Серёжа!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,500&family=Onest:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b; --fg:#fafaf9; --muted:#a8a29e; --card:rgba(255,255,255,.05);
+  --border:rgba(255,255,255,.1); --gold:#f5b94a; --flame:#ffd98a;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#09090b}}
+:root[data-theme="dark"]{--bg:#09090b}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Onest,system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(60% 50% at 50% 0%,rgba(245,185,74,.16),transparent 70%)}
+main{position:relative;max-width:960px;margin:0 auto;padding:0 20px 80px}
+h1,h2{font-family:Lora,Georgia,serif;margin:0;line-height:1.15}
+.hero{min-height:88vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:20px;padding:60px 0 20px}
+.hero h1{font-size:clamp(2.4rem,9vw,5.2rem);font-weight:700;letter-spacing:-.01em}
+.hero p{max-width:34ch;color:var(--muted);font-size:clamp(1.05rem,3.5vw,1.3rem);margin:0}
+.btn{font:inherit;font-weight:500;color:#1c1408;background:var(--gold);border:0;border-radius:16px;padding:14px 28px;cursor:pointer;
+  transition:all .3s ease-in-out}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(245,185,74,.3)}
+.btn:focus-visible,.candle:focus-visible{outline:3px solid var(--flame);outline-offset:4px}
+section{padding:56px 0}
+h2{font-size:clamp(1.6rem,5vw,2.4rem);text-align:center;margin-bottom:10px}
+.sub{text-align:center;color:var(--muted);margin:0 auto 32px;max-width:40ch}
+.cake{display:flex;justify-content:center;align-items:flex-end;gap:clamp(14px,5vw,34px);height:130px}
+.candle{all:unset;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;border-radius:8px;padding:4px}
+.flame{width:16px;height:28px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:radial-gradient(circle at 50% 70%,#fff 0,var(--flame) 35%,#f08a1c 100%);
+  opacity:0;transform:scale(.2);transform-origin:50% 100%;transition:all .4s ease-in-out;filter:drop-shadow(0 0 12px rgba(255,200,90,.9))}
+.candle.on .flame{opacity:1;transform:scale(1);animation:flick 1.2s ease-in-out infinite alternate}
+.wax{width:14px;height:62px;border-radius:6px;background:linear-gradient(90deg,#e7e5e4,#a8a29e)}
+.candle:nth-child(even) .wax{height:74px;background:linear-gradient(90deg,#fcd9a0,#d99a3c)}
+@keyframes flick{to{transform:scale(1.08,.94) rotate(-3deg)}}
+.plate{width:min(420px,90%);height:70px;margin:0 auto;border-radius:18px;background:linear-gradient(#78350f,#451a03);border:1px solid var(--border)}
+.msg{min-height:3.2em;text-align:center;margin-top:22px;font-family:Lora,serif;font-style:italic;font-size:1.25rem;color:var(--flame)}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+.card{background:var(--card);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:24px;padding:28px;
+  transition:all .3s ease-in-out}
+.card:hover{transform:translateY(-4px);border-color:rgba(245,185,74,.5)}
+.card h3{font-family:Lora,serif;font-size:1.4rem;margin:0 0 8px;color:var(--gold)}
+.card p{margin:0;color:#d6d3d1}
+.sign{text-align:center;font-family:Lora,serif;font-size:clamp(1.4rem,4.5vw,2rem)}
+.sign small{display:block;margin-top:10px;font-family:Onest,sans-serif;font-size:1rem;color:var(--muted)}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.reveal{opacity:0;transform:translateY(16px);transition:all .8s ease-out}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+<main>
+  <header class="hero">
+    <h1>С днём рождения,<br>дедушка Серёжа!</h1>
+    <p>Мы приготовили для тебя маленький праздник. Загляни, он внутри.</p>
+    <button class="btn" id="go">Открыть поздравление</button>
+  </header>
+
+  <section id="cake">
+    <h2>Загадай желание</h2>
+    <p class="sub">Зажги все пять свечей — нажимай на каждую.</p>
+    <div class="cake" id="candles">
+      <button class="candle" aria-label="Свеча 1"><span class="flame"></span><span class="wax"></span></button>
+      <button class="candle" aria-label="Свеча 2"><span class="flame"></span><span class="wax"></span></button>
+      <button class="candle" aria-label="Свеча 3"><span class="flame"></span><span class="wax"></span></button>
+      <button class="candle" aria-label="Свеча 4"><span class="flame"></span><span class="wax"></span></button>
+      <button class="candle" aria-label="Свеча 5"><span class="flame"></span><span class="wax"></span></button>
+    </div>
+    <div class="plate"></div>
+    <div class="msg" id="msg" aria-live="polite"></div>
+  </section>
+
+  <section>
+    <h2>Что мы тебе желаем</h2>
+    <p class="sub">Четыре пожелания от всей души.</p>
+    <div class="grid">
+      <article class="card reveal"><h3>Здоровья</h3><p>Крепкого, как дуб, чтобы каждое утро начиналось с бодрости и хорошего настроения.</p></article>
+      <article class="card reveal"><h3>Тепла</h3><p>Чтобы в доме всегда было уютно, а рядом — те, кто тебя любит и ждёт в гости.</p></article>
+      <article class="card reveal"><h3>Радости</h3><p>Чтобы каждый день приносил поводы для улыбки, а шутки и истории не заканчивались.</p></article>
+      <article class="card reveal"><h3>Времени для любимого</h3><p>Для дел, которые приносят удовольствие, неспешных вечеров и встреч с близкими.</p></article>
+    </div>
+  </section>
+
+  <section class="sign reveal">
+    Спасибо тебе за мудрость, заботу и тепло.<br>Мы тебя очень любим!
+    <small>Твои внуки и вся семья</small>
+  </section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+$('#go').onclick=()=>{$('#cake').scrollIntoView({behavior:'smooth'});confetti(60)};
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+const candles=[...document.querySelectorAll('.candle')], msg=$('#msg');
+candles.forEach(c=>c.addEventListener('click',()=>{
+  c.classList.toggle('on');
+  const n=candles.filter(x=>x.classList.contains('on')).length;
+  if(n===candles.length){msg.textContent='Пусть всё задуманное сбудется! С днём рождения!';confetti(220)}
+  else msg.textContent=n?`Горит свечей: ${n} из ${candles.length}`:'';
+}));
+
+const cv=$('#fx'),ctx=cv.getContext('2d');let parts=[],run=false;
+function size(){cv.width=innerWidth*devicePixelRatio;cv.height=innerHeight*devicePixelRatio}
+addEventListener('resize',size);size();
+function confetti(n){
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const cols=['#f5b94a','#ffd98a','#fafaf9','#f08a1c','#fca5a5'],d=devicePixelRatio;
+  for(let i=0;i<n;i++)parts.push({x:cv.width/2,y:cv.height*.6,vx:(Math.random()-.5)*16*d,vy:(-Math.random()*16-4)*d,
+    s:(4+Math.random()*5)*d,c:cols[i%cols.length],r:Math.random()*6,life:0});
+  if(!run){run=true;requestAnimationFrame(tick)}
+}
+function tick(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=.35*devicePixelRatio;p.r+=.2;p.life++;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);ctx.restore()});
+  parts=parts.filter(p=>p.y<cv.height+20&&p.life<200);
+  if(parts.length)requestAnimationFrame(tick);else{run=false;ctx.clearRect(0,0,cv.width,cv.height)}
+}
+</script>
+</body>
+</html>
